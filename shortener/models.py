@@ -4,7 +4,7 @@ from string import ascii_letters
 from django.conf import settings
 
 class Link(models.Model):
-    original_link=models.URLField()
+    original_link=models.URLField(max_length=2048)
     shortened_link=models.URLField(blank=True,null=True)
 
 
