@@ -1,0 +1,5 @@
+*.sqlite3
+Pipfile
+Pipfile.lock 
+shortener/migrations/
+user/migrations
