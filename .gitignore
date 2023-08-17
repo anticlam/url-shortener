@@ -1,4 +1,23 @@
-*.sqlite3
-Pipfile
-Pipfile.lock 
+# Python-related
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+
+# Django-related
+db.sqlite3
+*.log
+
+# Pip
+Pipfile.lock
+
+# OS
+.DS_Store  # macOS
+*.swp  # Vim
+*.swo  # Vim
+*.idea/  # PyCharm
+*.vscode/  # Visual Studio Code
+
+# env
 .env

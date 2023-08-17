@@ -8,7 +8,8 @@ from django.utils import timezone
 
 class Link(models.Model):
 
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, unique=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     original_link=models.URLField()
     shortened_link=models.URLField(blank=True,null=True)
