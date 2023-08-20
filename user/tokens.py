@@ -1,9 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.tokens import RefreshToken
 
+# Use the user model.
 User = get_user_model()
 
-
+# Generate a JWT token pair (access and refresh) for a given user. Returns a dict with the refresh and access tokens. 
 def create_jwt_pair_for_user(user: User):
     refresh = RefreshToken.for_user(user)
 

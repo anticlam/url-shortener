@@ -1,9 +1,9 @@
+# Importing Django's base user manager and abstract user model
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
+
+# Importing Django's models module
 from django.db import models
-
-# Create your models here.
-
 
 class CustomUserManager(BaseUserManager):
     """Custom manager for the User model."""
