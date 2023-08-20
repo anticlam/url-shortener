@@ -7,31 +7,23 @@ from django.db import models
 
 class CustomUserManager(BaseUserManager):
     """Custom manager for the User model."""
-    def create_user(self, email, password, **extra_fields):
+    def create_user(self, email, password=None, **extra_fields):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
-        user.set_password(password)
-        user.save()
         return user
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(self, email, password=None, **extra_fields):
         """Create and return a new superuser with the given email and password."""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-
-        if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser has to have is_staff being True")
-
-        if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser has to have is_superuser being True")
 
         return self.create_user(email=email, password=password, **extra_fields)
 
 
 class User(AbstractUser):
-    """Custom User model with email as the primary means of authentication."""
-    email = models.CharField(max_length=80, unique=True)
-    username = models.CharField(max_length=45)
+    """Custom User model with email as main authentication."""
+    email = models.EmailField(max_length=80, unique=True, blank=False,null=False)
+    username = models.CharField(max_length=45, blank=False)
     date_of_birth = models.DateField(null=True)
 
     objects = CustomUserManager()
