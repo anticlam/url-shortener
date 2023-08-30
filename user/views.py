@@ -1,69 +1,44 @@
-# Importing Django's authentication function
 from django.contrib.auth import authenticate
-
-# Importing DRF's classes and constants
-from rest_framework import generics, status
-from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-# Handling database integrity errors
 from django.db.utils import IntegrityError
-
-# Local imports
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .serializers import SignUpSerializer
 from .tokens import create_jwt_pair_for_user
-
-class SignUpView(generics.GenericAPIView):
-    # Specifying the serializer for user sign up
+from .models import User
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all()
     serializer_class = SignUpSerializer
     permission_classes = []
 
-    def post(self, request: Request):
-        # Getting the data from the request
-        data = request.data
-        # Initializing the serializer with the request data
-        serializer = self.serializer_class(data=data)
-        
-        # Checking if the serializer data is valid
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             try:
-                # Trying to save the user
-                serializer.save()
-                
-                # Preparing success response
-                response_data = {"message": "User Created Successfully", "data": serializer.data}
-                return Response(data=response_data, status=status.HTTP_201_CREATED)
-            except IntegrityError:
-                # Handling case where email is already used
-                response_data = {"message": "Email has already been used"}
-                return Response(data=response_data, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Returning any serialization errors
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                self.perform_create(serializer)
+                return Response({"message": "User Created Successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+            except IntegrityError as e:
+                # More detailed error message to understand the specific reason for the IntegrityError
+                return Response({"message": f"Error during registration: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def perform_create(self, serializer):
+        serializer.save()
 
 
-class LoginView(APIView):
-    permission_classes = []
-
-    def post(self, request: Request):
-        # Retrieve email and password
+    @action(detail=False, methods=['post'], name='user_login')
+    def login(self, request):
         email = request.data.get("email")
         password = request.data.get("password")
-        
-        # Authenticating the user with the provided credentials
         user = authenticate(email=email, password=password)
-        
-        if user is not None:
-            # User authenticated successfully, generating JWT tokens
-            tokens = create_jwt_pair_for_user(user)
-            response = {"message": "Login Successful", "tokens": tokens}
-            return Response(data=response, status=status.HTTP_200_OK)
-        else:
-            # Handling failed authentication
-            return Response(data={"message": "Invalid email or password"})
 
-    def get(self, request: Request):
-        # Response with user and authentication details
-        content = {"user": str(request.user), "auth": str(request.auth)}      
-        return Response(data=content, status=status.HTTP_200_OK)
+        if user:
+            tokens = create_jwt_pair_for_user(user)
+            return Response({"message": "Authentication successful", "tokens": tokens}, status=status.HTTP_200_OK)
+        return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=['get'], name='retrieve_user_info')
+    def retrieve_info(self, request):
+        content = {"user": str(request.user), "auth": str(request.auth)}
+        return Response(content, status=status.HTTP_200_OK)

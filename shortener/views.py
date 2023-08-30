@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from .models import Link
 from .serializer import LinkSerializer
 
+
+
 class ShortenerListAPIView(ListAPIView):
     """API view to list all shortened links (Admin only)."""
     permission_classes = [IsAdminUser]
@@ -26,10 +28,19 @@ class ShortenerCreateApiView(CreateAPIView):
     serializer_class = LinkSerializer
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        # Ensure the original link is provided in the request data
+        original_link = request.data.get('original_link')
+        
+        if not original_link:
+            return Response({"detail": "Original link is required."}, status=400)
+
+        # Use the custom manager's method to get or create the link
+        link, created = Link.objects.get_or_create_link(original_link)
+
+        # Serialize the link object for the response
+        serializer = self.get_serializer(link)
         return Response(serializer.data)
+
     
 
 class Redirector(View):
