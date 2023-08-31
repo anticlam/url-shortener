@@ -7,8 +7,6 @@ from django.utils import timezone
 from random import choices
 from string import ascii_letters
 import uuid
-from .link_utils import shortener
-from .managers import LinkManager
 
 class Link(models.Model):
     """
@@ -23,6 +21,7 @@ class Link(models.Model):
     """Field to store the shortened URL. It is set to blank and null as it will be generated automatically. 
     Not setting it as null causes an "It is impossible to change a nullable field 'shortened_link' on link to non-nullable without providing a default. This is because the database needs something to populate existing rows."
     error."""
-    objects = LinkManager() 
-
+    
+    class Meta:
+        db_table = "shortened_links"
  

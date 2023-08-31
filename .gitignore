@@ -143,3 +143,5 @@ cython_debug/
 # IDEs and Editors
 *.idea/  # PyCharm and JetBrains
 *.vscode/  # Visual Studio Code
+
+*.zip
