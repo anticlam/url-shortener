@@ -27,7 +27,7 @@ class LinkTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             len(response.data["results"]), 2
-        )  # Adjusted to check 'results' key
+        )  
 
     def test_redirect_link_not_found(self):
         url = reverse("redirector", args=["nonexistent"])
