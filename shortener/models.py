@@ -12,8 +12,11 @@ class Link(models.Model):
         default=uuid.uuid4, editable=False, primary_key=True, unique=True
     )
     created_at = models.DateTimeField(auto_now_add=True)
-    original_link = models.URLField()
-    shortened_link = models.URLField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)  
+    original_link = models.CharField(max_length=2048)
+    shortened_link = models.CharField(
+        max_length=100, blank=True, null=True, db_index=True
+    ) 
 
     class Meta:
         db_table = "shortened_links"

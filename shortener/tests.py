@@ -25,9 +25,7 @@ class LinkTests(APITestCase):
         response = self.client.get(url)
         print(f"Debug: Response Data in test_list_shortened_links: {response.data}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            len(response.data["results"]), 2
-        )  
+        self.assertEqual(len(response.data["results"]), 2)
 
     def test_redirect_link_not_found(self):
         url = reverse("redirector", args=["nonexistent"])

@@ -25,8 +25,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     date_of_birth = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
-    is_active = models.BooleanField(default=True, db_index=True)
-    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(
+        default=True, db_index=True, blank=False, null=False
+    )
+    is_staff = models.BooleanField(
+        default=False, db_index=True, blank=False, null=False
+    )
 
     objects = CustomUserManager()
 

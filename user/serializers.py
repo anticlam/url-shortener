@@ -18,14 +18,11 @@ class SignUpSerializer(serializers.ModelSerializer):
         fields = ["email", "password"]
 
     def validate_email(self, value):
-        # Generate a cache key based on the hashed email value
         cache_key = f"email_exists:{hashlib.md5(value.encode()).hexdigest()}"
-
-        # Try to get the value from the cache
         email_exists = cache.get(cache_key)
 
         if email_exists is None:
-            # If the cache doesn't have the value, query the database and set the cache
+            # Create cache if it doesn't exist
             email_exists = User.objects.filter(email=value).exists()
             cache.set(cache_key, email_exists, 60 * 15)  # Cache for 15 minutes
 
