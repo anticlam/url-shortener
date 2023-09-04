@@ -26,6 +26,7 @@ Monday update:
 - Switched to `viewsets`.
 
 **User Model:**
+- Added a `db_table`
 - Switched to `AbstractBaseUser`.
 - Added database indexing.
 
